@@ -2,7 +2,7 @@
 A tool to read and write binary files conveniently.
 """
 
-from typing import Any, Optional, Union, overload
+from typing import Any, Optional, Union
 
 
 class Parser:
@@ -13,6 +13,8 @@ class Parser:
     def __init__(self, file_name):
         """
         Initialize the Parser object.
+
+        :param file_name: The name of the file to open.
         """
         self.file_name = file_name
         self.file = open(file_name, "rb")
@@ -90,6 +92,9 @@ class Parser:
     def seek(self, offset: int, whence: int = 0):
         """
         Seek to a certain position in the file.
+
+        :param offset: The offset to seek to.
+        :param whence: The position to seek from.
         """
         return self.file.seek(offset, whence)
 
@@ -114,6 +119,8 @@ class Builder:
     def __init__(self, file_name):
         """
         Initialize the Builder object.
+
+        :param file_name: The name of the file to build.
         """
         self.file_name = file_name
         self.file = open(file_name, "wb")
@@ -136,13 +143,14 @@ class Builder:
         """
         self.close()
 
-    def write(self, data: Union[bytes, bytearray]):
+    def write(self, data: Union[bytes, bytearray]) -> "Builder":
         """
         Write data to the file.
         """
         self.file.write(data)
+        return self
 
-    def write_int(self, data: int, size: int = 1, signed: bool = False, endian: str = "little"):
+    def write_int(self, data: int, size: int = 1, signed: bool = False, endian: str = "little") -> "Builder":
         """
         Write an integer to the file.
 
@@ -154,8 +162,9 @@ class Builder:
         if endian not in ["little", "big"]:
             raise ValueError("Invalid byteorder.")
         self.write(data.to_bytes(size, byteorder=endian, signed=signed))  # type: ignore
+        return self
 
-    def write_str(self, data: str, encoding: str = "utf-8"):
+    def write_str(self, data: str, encoding: str = "utf-8") -> "Builder":
         """
         Write a string to the file.
 
@@ -163,10 +172,14 @@ class Builder:
         :param encoding: The encoding of the string.
         """
         self.write(data.encode(encoding))
+        return self
 
     def seek(self, offset: int, whence: int = 0):
         """
         Seek to a certain position in the file.
+
+        :param offset: The offset to seek to.
+        :param whence: The position to seek from.
         """
         return self.file.seek(offset, whence)
 
