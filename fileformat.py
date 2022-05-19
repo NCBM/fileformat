@@ -2,7 +2,7 @@
 A tool to read and write binary files conveniently.
 """
 
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 
 class Parser:
@@ -45,7 +45,7 @@ class Parser:
         """
         return self.file.read(size)
 
-    def read_all(self):
+    def read_all(self) -> bytes:
         """
         Read all the data from the file. This is equivalent to calling `read(None)`.
         """
@@ -76,7 +76,7 @@ class Parser:
         """
         return self.read(size).decode(encoding)
 
-    def read_until(self, data: bytes):
+    def read_until(self, data: bytes) -> bytes:
         """
         Read until the data is found.
 
