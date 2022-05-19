@@ -2,7 +2,7 @@
 A tool to read and write binary files conveniently.
 """
 
-from typing import Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 
 class Parser:
@@ -88,6 +88,38 @@ class Parser:
         while data not in src:
             src += self.read(1)
         return src
+
+    def read_fmt(self, fmt: str, endian: str = "little") -> Tuple[Any, ...]:
+        """
+        Read data from the file according to a format string.
+
+        :param fmt: The format string.
+
+        :return: The data read.
+
+        The format string is under the following format:
+        * `b`: A single byte. Append a number to specify the size.
+        * `i`: A signed integer. Append a number to specify the size.
+        * `u`: An unsigned integer. Append a number to specify the size.
+        * `s`: A string. Append a number to specify the size.
+
+        - use spaces to separate the arguments.
+
+        Example: `head, ver = read_fmt("b4 i4")`
+        """
+        data: List[Any] = []
+        for arg in fmt.split():
+            if arg[0] == "b":
+                data.append(self.read(int(arg[1:]) if len(arg) > 1 else 1))
+            elif arg[0] == "i":
+                data.append(self.read_int(int(arg[1:]) if len(arg) > 1 else 1, signed=True))
+            elif arg[0] == "u":
+                data.append(self.read_int(int(arg[1:]) if len(arg) > 1 else 1, signed=False))
+            elif arg[0] == "s":
+                data.append(self.read_str(int(arg[1:]) if len(arg) > 1 else 1))
+            else:
+                raise ValueError("Invalid format string.")
+        return tuple(data)
 
     def seek(self, offset: int, whence: int = 0):
         """
